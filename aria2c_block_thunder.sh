@@ -161,6 +161,7 @@ while [ 1 == 1 ]; do
     debug "${t_datetime} 开始扫描...."
     # 采集防火墙规则中相关记录
     iptables_rules="`iptables-save -t filter | grep Block_Thunder_`"
+    ip6tables_rules="`ip6tables-save -t filter | grep Block_Thunder_`"
     
     t_active=`curl -sk -X POST -H "application/json" -d "{\"jsonrpc\":\"2.0\",\"method\":\"aria2.tellActive\",\"id\":1,\"params\":[\"${rpc_user}:${rpc_pwd}\"]}" ${t_url}`
     rtn=$?
@@ -195,6 +196,7 @@ while [ 1 == 1 ]; do
                 if [[ "`echo ${iptables_rules} | grep \"${t_peerIdips[(( $i + 1 ))]}\"`" == "" ]]; then
                     t_datetime=`date +"%Y-%m-%d %H:%M:%S"`
                     iptables -A INPUT -s ${t_peerIdips[(( $i + 1 ))]}/32 -m comment --comment "Block_Thunder_${t_peerIdips[$i]} @ ${t_datetime}" -j DROP
+                    ip6tables -A INPUT -s ${t_peerIdips[(( $i + 1 ))]}/64 -m comment --comment "Block_Thunder_${t_peerIdips[$i]} @ ${t_datetime}" -j DROP
                     debug "\033[31m${t_peerIdips[(( $i + 1 ))]} 经iptables封禁(peerID:${t_peerIdips[$i]})\033[0m"
                 fi
             fi
@@ -211,6 +213,19 @@ while [ 1 == 1 ]; do
         t_timestamp=`date -d "${t_time}" +%s`
         if [[ ${t_timestamp} -lt ${t_basetamp} ]]; then
             t_command="iptables -D ${rule:3}"
+            eval "${t_command}"
+            t_ip=${rule:12}
+            t_ip=${t_ip%%/*}
+            debug "\033[32m${t_ip} 经iptables封禁(封禁时间:${t_time})\033[0m"
+        fi
+    done
+    for rule in ${ip6tables_rules}; do
+        t_time=${rule##*@}      # 截取最后一个@右侧内容
+        t_time=${t_time%%\"*}   # 截取第一个"左侧内容
+        t_time=${t_time:1}      # 截掉左侧空格
+        t_timestamp=`date -d "${t_time}" +%s`
+        if [[ ${t_timestamp} -lt ${t_basetamp} ]]; then
+            t_command="ip6tables -D ${rule:3}"
             eval "${t_command}"
             t_ip=${rule:12}
             t_ip=${t_ip%%/*}

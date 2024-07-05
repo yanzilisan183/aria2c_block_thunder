@@ -15,3 +15,20 @@ linux shell bash 脚本，弥补aria2无法反迅雷吸血的弱点。
 更多信息可使用--help参数查看
 
 aria2c_block_thunder.sh --help
+
+---
+
+## 开机自启动
+
+在 `/etc/rc.local` 文件中的 `exit 0` 前添加以下内容：
+
+```bash
+bash /path/to/aria2c_block_thunder.sh &
+```
+
+在aria2未启动时，脚本可能会报错，此时需要先启动aria2，然后再运行脚本。如果aria2本身开机自启，则建议先 sleep 30 秒再运行脚本，确保是在aria2启动后运行脚本。
+
+```bash
+sleep 30
+bash /path/to/aria2c_block_thunder.sh &
+```
