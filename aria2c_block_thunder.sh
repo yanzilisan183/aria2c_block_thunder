@@ -2,7 +2,7 @@
 # aria2c BT下载防迅雷吸血
 # https://github.com/yanzilisan183/aria2c_block_thunder
 # Author:           yanzilisan183@sina.com
-# LastModifyAt:     15:40 2024-12-30
+# LastModifyAt:     09:09 2024-12-31
 
 debug=no                # yes|no，默认no，可通过--debug参数开启
 wait_second=60          # 整数，检测间隔时长（单位:秒），可通过--wait参数指定
@@ -77,7 +77,6 @@ do
         echo "  -h, --help                 显示此帮助信息并退出"
         exit 0
     fi
-    
 done
 
 u=`whoami`
@@ -106,7 +105,6 @@ function debug() {
 function debug_log() {
     debug "$*"
     echo "`date +"%Y-%m-%d %H:%M:%S.%N"` [${self}] [DEBUG] $*" | sed 's/\\033\[[0-9;]*m//g' >>$LOG
-    # echo -e "`date +"%Y-%m-%d %H:%M:%S.%N"` [${self}] [DEBUG] $*" | sed 's/(^\[|\\033)\[[0-9;]*m//g' >>$LOG
 }
 
 function urldecode() {
@@ -220,13 +218,13 @@ while [ 1 == 1 ]; do
             fi
         done
     done
-    # 请理过期的防火墙规则
+    # 清理过期的防火墙规则
     t_basetamp=$(( `date +%s`-$timeout_second ))
-    o_IFS="$IFS"    # 备份系统IFS默认值
+    o_IFS="$IFS"    # 转存系统IFS当前值
     IFS=$'\n'
     for rule in ${iptables_rules}; do
         t_time=${rule##*@}      # 截取最后一个@右侧内容
-        t_time=${t_time%%\"*}   # 截取第一个"左侧内容
+        t_time=${t_time%%\"*}   # 截取第一个"左侧内容 \}
         t_time=${t_time:1}      # 截掉左侧空格
         t_timestamp=`date -d "${t_time}" +%s`
         if [[ ${t_timestamp} -lt ${t_basetamp} ]]; then

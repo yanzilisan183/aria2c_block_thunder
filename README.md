@@ -1,6 +1,6 @@
 ** 水平一般，能力有限，热爱开源，鄙视吸血行为 **
 
-linux shell bash 脚本，弥补aria2无法反迅雷吸血的弱点。
+linux shell 脚本(bash)，弥补aria2无法反迅雷吸血的弱点。
 
 间隔向JSONRPC请求Peers，并找出迅雷系客户端，将其IP地址通过ipables进行封禁。
 
@@ -12,6 +12,6 @@ linux shell bash 脚本，弥补aria2无法反迅雷吸血的弱点。
 
 脚本内通过sleep延时循环，不必使用cron定时
 
-更多信息可使用--help参数查看
+更多信息可使用 --help 参数查看
 
-aria2c_block_thunder.sh --help
+./aria2c_block_thunder.sh --help
